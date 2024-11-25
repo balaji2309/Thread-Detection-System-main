@@ -1,43 +1,40 @@
-# Threat Detection Security System with Face Recognition, Gun Detection, and Audio Analysis Capabilities
-This security system is designed to recognize both **Known threats** **(Trained to detect and alert for specific individuals that may pose a threat, such as those on a watchlist or individuals with a history of criminal activity.)** and **Unidentified faces (Suitable for controlled environments where access is restricted to authorized personnel only)** allowing security personnel to take appropriate actions based on the detected individuals, It's also able to recognize **home owner faces and the system does not trigger an alarm.** It has also the capabilities of **Detecting guns**, and **Identifying unusual sounds**. When any of these events are detected, an alarm is triggered and an email notification is sent with relevant images or audio files.
+### Summary of the Code
 
-<h2>Dependencies</h2>
-<p>To run the script, you need to install the following Python packages:</p>
-<ul>
-  <li>numpy</li>
-  <li>opencv-python</li>
-  <li>imutils</li>
-  <li>pygame</li>
-  <li>smtplib</li>
-  <li>sounddevice</li>
-  <li>scipy</li>
-  <li>pickle</li>
-</ul>
+This Python script implements a security system that uses face recognition to detect and identify people through a camera feed. Key features of the system include:
 
-<h2>Configuration</h2>
-<p>Before running the script, You also need to download or train and configure the following:</p>
-<ul>
-  <li>face_cascade.xml: a pre-trained Haar Cascade classifier for face detection.</li>
-  <li>openface_nn4.small2.v1.t7: a pre-trained deep neural network model for face recognition.</li>
-  <li> known_faces.pkl: a pickle file containing a dictionary of known threats (name and embeddings).</li>
-  <li>home_owners.pkl: a pickle file containing a dictionary of homeowner faces (name and embeddings).</li>
-  <li>deploy.prototxt and res10_300x300_ssd_iter_140000_fp16.caffemodel: pre-trained deep neural network models for face detection using OpenCV’s DNN module.</li>
-  <li>enter your email credentials and the paths to the above-mentioned files in the code.</li>
-</ul>
+1. **Face Recognition**:
+   - The script uses the `face_recognition` library to detect faces and compare them against a pre-existing list of known faces (stored in a pickle file).
+   - If a known face is recognized, it displays the name and face distance (closeness) on the camera feed.
+   - If an unknown face is detected, it triggers an alarm and sends an email notification.
 
-<h2>How It Works</h2>
-<p>The code runs an infinite loop that captures frames from the webcam and performs the following operations:</p>
-<ol>
-  <li>Gun detection: Uses a pre-trained cascade classifier to detect guns in the frame. If a gun is detected, the system triggers an alarm and sends an email notification with a screenshot of the frame.</li>
-  <li>Face detection and recognition: Uses a pre-trained Haar Cascade classifier for face detection and OpenFace’s deep neural network model for face recognition to detect and recognize faces in the frame. If a homeowner face is detected, the system does not trigger any alarm. If an unknown face or known threats is detected, the system triggers an alarm and sends an email notification with a screenshot of the frame.</li>
-  <li>Audio detection: Uses sounddevice library to capture audio data from the microphone. If any unusual sound is detected, the system triggers an alarm and sends an email notification with a recording of the audio.</li>
-  <li>Email notification: Uses Python’s built-in email and smtplib libraries to send email notifications with attached images or audio files.</li>
-  <li>The system also uses the Pygame library to play an alarm sound when an alarm is triggered.</li>
-</ol>
-  
- <h2>Running the Script</h2>
- <p>To run the script, simply execute the Python file in your terminal or command prompt:</p>
-<p>The script will start capturing video and audio, and it will trigger alarms and send email notifications when events are detected.</p>
+2. **Alarm System**:
+   - When an unknown face is detected, a sound alarm is played using Pygame (`alarm.wav`).
+   - The alarm will continue until a known face is detected or the program is manually stopped.
 
-**This real-time threat detection system can be useful for home security and surveillance applications. The code can be customized to add more functionalities and improve the accuracy of the detection models.**
- 
+3. **Email Notification**:
+   - Upon detecting an unknown face, an email is sent to a predefined receiver with an attachment of the captured image of the unknown face.
+   - Email is sent using Gmail's SMTP server with proper SSL encryption and authentication.
+
+4. **Video Feed**:
+   - The camera feed is processed in real-time, with faces detected and labeled either as "Known" or "Unknown".
+   - A bounding box is drawn around the detected faces.
+
+5. **Graceful Exit**:
+   - The loop continues until the user presses the `q` key.
+   - If the program is manually interrupted, resources are properly released using `finally`, ensuring the alarm stops, and the camera is released.
+
+### Key Functions:
+- **`find_closest_face`**: Compares the detected face against known faces and calculates the distance (similarity).
+- **`play_alarm`** and **`stop_alarm`**: Control the playing and stopping of the alarm.
+- **`send_email`**: Sends an email notification with an image attachment if an unknown face is detected.
+
+### Error Handling:
+- The code includes error handling for issues like missing model files, problems with face detection, and email sending errors.
+
+### Flow:
+1. The program captures the video feed and detects faces.
+2. If a face is recognized, it shows the name and stops the alarm.
+3. If the face is unknown, it triggers an alarm and sends an email with the image of the unknown face.
+4. The program stops when the user presses `q` or the program is interrupted.
+
+This solution provides a simple security monitoring system with real-time facial recognition and email notifications for unknown intruders.
